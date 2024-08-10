@@ -167,7 +167,118 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return [h * 360, s * 100, l * 100];
         },
-    }
+        hslToHex(hsl) {
+            let [h, s, l] = hsl;
+            h /= 360;
+            s /= 100;
+            l /= 100;
+            let r, g, b;
+
+            if (s === 0) {
+                r = g = b = l;
+            } else {
+                const hue2rgb = (p, q, t) => {
+                    if (t < 0) t += 1;
+                    if (t > 1) t -= 1;
+                    if (t < 1/6) return p + (q - p) * 6 * t;
+                    if (t < 1/2) return q;
+                    if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                    return p;
+                };
+                const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                const p = 2 * l - q;
+                r = hue2rgb(p, q, h + 1/3);
+                g = hue2rgb(p, q, h);
+                b = hue2rgb(p, q, h - 1/3);
+            }
+
+            return this.rgbToHex([Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]);
+        },
+        generateCSS() {
+            let css = ':root {\n';
+            Object.entries(this.controls).forEach(([key, control]) => {
+                const varName = `--${this.camelToKebab(key)}`;
+                css += `    ${varName}: ${control.value}${key === 'baseFontSize' || key === 'baseSpacing' ? 'px' : ''};\n`;
+            });
+            this.elements.customVariablesContainer.querySelectorAll('input').forEach(input => {
+                css += `    --${input.dataset.varName}: ${input.value};\n`;
+            });
+            css += '}\n';
+            return css;
+        },
+        generateSCSS() {
+            let scss = '$theme: (\n';
+            Object.entries(this.controls).forEach(([key, control]) => {
+                const varName = this.camelToKebab(key);
+                scss += `    ${varName}: ${control.value}${key === 'baseFontSize' || key === 'baseSpacing' ? 'px' : ''},\n`;
+            });
+            this.elements.customVariablesContainer.querySelectorAll('input').forEach(input => {
+                scss += `    ${input.dataset.varName}: ${input.value},\n`;
+            });
+            scss = scss.slice(0, -2) + '\n);\n\n';
+            scss += ':root {\n';
+            scss += '    @each $key, $value in $theme {\n';
+            scss += '        --#{$key}: #{$value};\n';
+            scss += '    }\n';
+            scss += '}\n';
+            return scss;
+        },
+        generateJSON() {
+            const json = {};
+            Object.entries(this.controls).forEach(([key, control]) => {
+                const varName = this.camelToKebab(key);
+                json[varName] = control.value;
+                if (key === 'baseFontSize' || key === 'baseSpacing') {
+                    json[varName] += 'px';
+                }
+            });
+            this.elements.customVariablesContainer.querySelectorAll('input').forEach(input => {
+                json[input.dataset.varName] = input.value;
+            });
+            return JSON.stringify(json, null, 2);
+        },
+        downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        },
+        showNotification(message) {
+            const notification = document.createElement('div');
+            notification.classList.add('notification');
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            this.animateElement(notification, 'fadeIn');
+            setTimeout(() => {
+                this.animateElement(notification, 'fadeOut');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 3000);
+        },
+        animateElement(element, animationName) {
+            element.classList.add(animationName);
+            element.addEventListener('animationend', () => {
+                element.classList.remove(animationName);
+            }, { once: true });
+        },
+        animateColorChange(property, newValue) {
+            const element = document.body;
+            const currentColor = getComputedStyle(element).getPropertyValue(property);
+            element.style.setProperty('transition', `${property} 0.3s ease-in-out`);
+            requestAnimationFrame(() => {
+                element.style.setProperty(property, newValue);
+            });
+        },
+        camelToKebab(string) {
+            return string.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+        }
+    };
 
     app.init();
 });
