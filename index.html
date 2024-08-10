@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Theme Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div id="theme-controls">
+            <h2>Theme Controls</h2>
+            <div id="color-pickers">
+                <label>Primary Color: <input type="color" id="primary-color" value="#007bff"></label>
+                <label>Secondary Color: <input type="color" id="secondary-color" value="#6c757d"></label>
+                <label>Background Color: <input type="color" id="background-color" value="#ffffff"></label>
+                <label>Text Color: <input type="color" id="text-color" value="#000000"></label>
+            </div>
+            <div id="typography-controls">
+                <label>Font Family: <input type="text" id="font-family" value="Arial, sans-serif"></label>
+                <label>Font Size: <input type="number" id="font-size" value="16" min="8" max="32"> px</label>
+            </div>
+            <div id="spacing-controls">
+                <label>Padding: <input type="number" id="padding" value="16" min="0" max="32"> px</label>
+                <label>Margin: <input type="number" id="margin" value="16" min="0" max="32"> px</label>
+            </div>
+            <button id="toggle-theme">Toggle Light/Dark Mode</button>
+            <button id="export-theme">Export Theme</button>
+        </div>
+        <div id="preview">
+            <h2>Preview</h2>
+            <div class="sample-component">
+                <h3>Sample Heading</h3>
+                <p>This is a sample paragraph to demonstrate the theme.</p>
+                <button class="btn-primary">Primary Button</button>
+                <button class="btn-secondary">Secondary Button</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

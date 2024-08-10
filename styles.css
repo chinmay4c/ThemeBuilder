@@ -1,0 +1,77 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --font-family: Arial, sans-serif;
+    --font-size: 16px;
+    --padding: 16px;
+    --margin: 16px;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+}
+
+#app {
+    display: flex;
+    min-height: 100vh;
+}
+
+#theme-controls, #preview {
+    padding: var(--padding);
+    flex: 1;
+}
+
+#theme-controls {
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input[type="color"], input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.sample-component {
+    background-color: var(--background-color);
+    padding: var(--padding);
+    margin: var(--margin);
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
