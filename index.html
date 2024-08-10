@@ -35,12 +35,12 @@
                             <option value="'Georgia', serif">Georgia</option>
                         </select>
                     </label>
-                    <label>Base Font Size: <input type="number" id="base-font-size" value="16" min="12" max="24"> px</label>
-                    <label>Line Height: <input type="number" id="line-height" value="1.5" min="1" max="2" step="0.1"></label>
+                    <label>Base Font Size: <input type="range" id="base-font-size" min="12" max="24" value="16"> <span class="range-value">16px</span></label>
+                    <label>Line Height: <input type="range" id="line-height" min="1" max="2" step="0.1" value="1.5"> <span class="range-value">1.5</span></label>
                 </section>
                 <section>
                     <h2>Spacing</h2>
-                    <label>Base Spacing: <input type="number" id="base-spacing" value="16" min="4" max="32"> px</label>
+                    <label>Base Spacing: <input type="range" id="base-spacing" min="4" max="32" value="16"> <span class="range-value">16px</span></label>
                 </section>
                 <section>
                     <h2>Custom Variables</h2>
