@@ -3,88 +3,214 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeControls = {
         primaryColor: document.getElementById('primary-color'),
         secondaryColor: document.getElementById('secondary-color'),
+        accentColor: document.getElementById('accent-color'),
         backgroundColor: document.getElementById('background-color'),
         textColor: document.getElementById('text-color'),
         fontFamily: document.getElementById('font-family'),
-        fontSize: document.getElementById('font-size'),
-        padding: document.getElementById('padding'),
-        margin: document.getElementById('margin')
+        baseFontSize: document.getElementById('base-font-size'),
+        lineHeight: document.getElementById('line-height'),
+        baseSpacing: document.getElementById('base-spacing')
     };
 
     const toggleThemeBtn = document.getElementById('toggle-theme');
     const exportThemeBtn = document.getElementById('export-theme');
+    const generatePaletteBtn = document.getElementById('generate-palette');
+    const addCustomVariableBtn = document.getElementById('add-custom-variable');
+    const customVariablesContainer = document.getElementById('custom-variables');
 
-    // Update theme based on controls
     function updateTheme() {
-        root.style.setProperty('--primary-color', themeControls.primaryColor.value);
-        root.style.setProperty('--secondary-color', themeControls.secondaryColor.value);
-        root.style.setProperty('--background-color', themeControls.backgroundColor.value);
-        root.style.setProperty('--text-color', themeControls.textColor.value);
-        root.style.setProperty('--font-family', themeControls.fontFamily.value);
-        root.style.setProperty('--font-size', `${themeControls.fontSize.value}px`);
-        root.style.setProperty('--padding', `${themeControls.padding.value}px`);
-        root.style.setProperty('--margin', `${themeControls.margin.value}px`);
+        Object.entries(themeControls).forEach(([key, control]) => {
+            let value = control.value;
+            if (key === 'baseFontSize' || key === 'baseSpacing') {
+                value += 'px';
+            }
+            root.style.setProperty(`--${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`, value);
+        });
     }
 
-    // Add event listeners to all controls
     Object.values(themeControls).forEach(control => {
         control.addEventListener('input', updateTheme);
     });
 
-    // Toggle between light and dark mode
     toggleThemeBtn.addEventListener('click', () => {
-        if (root.style.getPropertyValue('--background-color') === '#ffffff') {
-            root.style.setProperty('--background-color', '#333333');
-            root.style.setProperty('--text-color', '#ffffff');
-            themeControls.backgroundColor.value = '#333333';
-            themeControls.textColor.value = '#ffffff';
-        } else {
-            root.style.setProperty('--background-color', '#ffffff');
-            root.style.setProperty('--text-color', '#000000');
-            themeControls.backgroundColor.value = '#ffffff';
-            themeControls.textColor.value = '#000000';
+        const isDarkMode = root.style.getPropertyValue('--background-color').trim() === '#333333';
+        root.style.setProperty('--background-color', isDarkMode ? '#ffffff' : '#333333');
+        root.style.setProperty('--text-color', isDarkMode ? '#000000' : '#ffffff');
+        themeControls.backgroundColor.value = isDarkMode ? '#ffffff' : '#333333';
+        themeControls.textColor.value = isDarkMode ? '#000000' : '#ffffff';
+    });
+
+    generatePaletteBtn.addEventListener('click', () => {
+        const primaryColor = themeControls.primaryColor.value;
+        const secondaryColor = generateComplementaryColor(primaryColor);
+        const accentColor = generateAnalogousColor(primaryColor);
+
+        themeControls.secondaryColor.value = secondaryColor;
+        themeControls.accentColor.value = accentColor;
+
+        updateTheme();
+    });
+
+    addCustomVariableBtn.addEventListener('click', () => {
+        const variableName = prompt('Enter custom variable name (e.g., button-radius):');
+        if (variableName) {
+            const variableValue = prompt(`Enter value for ${variableName}:`);
+            if (variableValue) {
+                const customVarElement = document.createElement('div');
+                customVarElement.innerHTML = `
+                    <label>${variableName}:
+                        <input type="text" data-var-name="${variableName}" value="${variableValue}">
+                    </label>
+                `;
+                customVariablesContainer.appendChild(customVarElement);
+
+                const input = customVarElement.querySelector('input');
+                input.addEventListener('input', () => {
+                    root.style.setProperty(`--${variableName}`, input.value);
+                });
+
+                root.style.setProperty(`--${variableName}`, variableValue);
+            }
         }
     });
 
-    // Export theme as CSS
     exportThemeBtn.addEventListener('click', () => {
-        const css = `
-:root {
-    --primary-color: ${themeControls.primaryColor.value};
-    --secondary-color: ${themeControls.secondaryColor.value};
-    --background-color: ${themeControls.backgroundColor.value};
-    --text-color: ${themeControls.textColor.value};
-    --font-family: ${themeControls.fontFamily.value};
-    --font-size: ${themeControls.fontSize.value}px;
-    --padding: ${themeControls.padding.value}px;
-    --margin: ${themeControls.margin.value}px;
-}
+        const css = generateCSS();
+        const scss = generateSCSS();
+        const json = generateJSON();
 
-body {
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-    background-color: var(--background-color);
-    color: var(--text-color);
-}
+        downloadFile('theme.css', css);
+        downloadFile('theme.scss', scss);
+        downloadFile('theme.json', json);
+    });
 
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
+    function generateComplementaryColor(hex) {
+        const rgb = hexToRgb(hex);
+        const complement = rgb.map(value => 255 - value);
+        return rgbToHex(complement);
+    }
 
-.btn-secondary {
-    background-color: var(--secondary-color);
-    color: white;
-}`;
+    function generateAnalogousColor(hex) {
+        const hsl = hexToHsl(hex);
+        hsl[0] = (hsl[0] + 30) % 360;
+        return hslToHex(hsl);
+    }
 
-        const blob = new Blob([css], { type: 'text/css' });
+    function hexToRgb(hex) {
+        const bigint = parseInt(hex.slice(1), 16);
+        return [(bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255];
+    }
+
+    function rgbToHex(rgb) {
+        return '#' + rgb.map(x => x.toString(16).padStart(2, '0')).join('');
+    }
+
+    function hexToHsl(hex) {
+        let [r, g, b] = hexToRgb(hex).map(x => x / 255);
+        const max = Math.max(r, g, b), min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+
+        if (max === min) {
+            h = s = 0;
+        } else {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                case g: h = (b - r) / d + 2; break;
+                case b: h = (r - g) / d + 4; break;
+            }
+            h /= 6;
+        }
+
+        return [h * 360, s * 100, l * 100];
+    }
+
+    function hslToHex(hsl) {
+        let [h, s, l] = hsl;
+        h /= 360;
+        s /= 100;
+        l /= 100;
+        let r, g, b;
+
+        if (s === 0) {
+            r = g = b = l;
+        } else {
+            const hue2rgb = (p, q, t) => {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1/6) return p + (q - p) * 6 * t;
+                if (t < 1/2) return q;
+                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                return p;
+            };
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+        }
+
+        return rgbToHex([Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]);
+    }
+
+    function generateCSS() {
+        let css = ':root {\n';
+        Object.entries(themeControls).forEach(([key, control]) => {
+            const varName = `--${key.replace(/([A-Z])/g, "-$1").toLowerCase()}`;
+            css += `    ${varName}: ${control.value}${key === 'baseFontSize' || key === 'baseSpacing' ? 'px' : ''};\n`;
+        });
+        customVariablesContainer.querySelectorAll('input').forEach(input => {
+            css += `    --${input.dataset.varName}: ${input.value};\n`;
+        });
+        css += '}\n';
+        return css;
+    }
+
+    function generateSCSS() {
+        let scss = '$theme: (\n';
+        Object.entries(themeControls).forEach(([key, control]) => {
+            const varName = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+            scss += `    ${varName}: ${control.value}${key === 'baseFontSize' || key === 'baseSpacing' ? 'px' : ''},\n`;
+        });
+        customVariablesContainer.querySelectorAll('input').forEach(input => {
+            scss += `    ${input.dataset.varName}: ${input.value},\n`;
+        });
+        scss = scss.slice(0, -2) + '\n);\n\n';
+        scss += ':root {\n';
+        scss += '    @each $key, $value in $theme {\n';
+        scss += '        --#{$key}: #{$value};\n';
+        scss += '    }\n';
+        scss += '}\n';
+        return scss;
+    }
+
+    function generateJSON() {
+        const json = {};
+        Object.entries(themeControls).forEach(([key, control]) => {
+            const varName = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+            json[varName] = control.value;
+            if (key === 'baseFontSize' || key === 'baseSpacing') {
+                json[varName] += 'px';
+            }
+        });
+        customVariablesContainer.querySelectorAll('input').forEach(input => {
+            json[input.dataset.varName] = input.value;
+        });
+        return JSON.stringify(json, null, 2);
+    }
+
+    function downloadFile(filename, content) {
+        const blob = new Blob([content], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'theme.css';
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-    });
+    }
+
+    updateTheme();
 });
