@@ -5,37 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Theme Builder</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="app">
-        <div id="theme-controls">
-            <h2>Theme Controls</h2>
-            <div id="color-pickers">
-                <label>Primary Color: <input type="color" id="primary-color" value="#007bff"></label>
-                <label>Secondary Color: <input type="color" id="secondary-color" value="#6c757d"></label>
-                <label>Background Color: <input type="color" id="background-color" value="#ffffff"></label>
-                <label>Text Color: <input type="color" id="text-color" value="#000000"></label>
+        <header>
+            <h1>Dynamic Theme Builder</h1>
+        </header>
+        <main>
+            <div id="theme-controls">
+                <section>
+                    <h2>Colors</h2>
+                    <div class="color-palette">
+                        <label>Primary: <input type="color" id="primary-color" value="#007bff"></label>
+                        <label>Secondary: <input type="color" id="secondary-color" value="#6c757d"></label>
+                        <label>Accent: <input type="color" id="accent-color" value="#28a745"></label>
+                        <label>Background: <input type="color" id="background-color" value="#ffffff"></label>
+                        <label>Text: <input type="color" id="text-color" value="#000000"></label>
+                    </div>
+                    <button id="generate-palette">Generate Palette</button>
+                </section>
+                <section>
+                    <h2>Typography</h2>
+                    <label>Font Family:
+                        <select id="font-family">
+                            <option value="'Roboto', sans-serif">Roboto</option>
+                            <option value="'Arial', sans-serif">Arial</option>
+                            <option value="'Helvetica', sans-serif">Helvetica</option>
+                            <option value="'Georgia', serif">Georgia</option>
+                        </select>
+                    </label>
+                    <label>Base Font Size: <input type="number" id="base-font-size" value="16" min="12" max="24"> px</label>
+                    <label>Line Height: <input type="number" id="line-height" value="1.5" min="1" max="2" step="0.1"></label>
+                </section>
+                <section>
+                    <h2>Spacing</h2>
+                    <label>Base Spacing: <input type="number" id="base-spacing" value="16" min="4" max="32"> px</label>
+                </section>
+                <section>
+                    <h2>Custom Variables</h2>
+                    <div id="custom-variables"></div>
+                    <button id="add-custom-variable">Add Custom Variable</button>
+                </section>
+                <section>
+                    <h2>Theme Actions</h2>
+                    <button id="toggle-theme">Toggle Light/Dark Mode</button>
+                    <button id="export-theme">Export Theme</button>
+                </section>
             </div>
-            <div id="typography-controls">
-                <label>Font Family: <input type="text" id="font-family" value="Arial, sans-serif"></label>
-                <label>Font Size: <input type="number" id="font-size" value="16" min="8" max="32"> px</label>
+            <div id="preview">
+                <h2>Preview</h2>
+                <div class="preview-content">
+                    <div class="sample-component card">
+                        <h3>Sample Card</h3>
+                        <p>This is a sample paragraph to demonstrate the theme. It includes some <strong>bold text</strong> and <em>italic text</em>.</p>
+                        <button class="btn btn-primary">Primary Button</button>
+                        <button class="btn btn-secondary">Secondary Button</button>
+                    </div>
+                    <div class="sample-component form">
+                        <h3>Sample Form</h3>
+                        <form>
+                            <div class="form-group">
+                                <label for="sample-input">Sample Input</label>
+                                <input type="text" id="sample-input" placeholder="Enter text">
+                            </div>
+                            <div class="form-group">
+                                <label for="sample-select">Sample Select</label>
+                                <select id="sample-select">
+                                    <option>Option 1</option>
+                                    <option>Option 2</option>
+                                    <option>Option 3</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div id="spacing-controls">
-                <label>Padding: <input type="number" id="padding" value="16" min="0" max="32"> px</label>
-                <label>Margin: <input type="number" id="margin" value="16" min="0" max="32"> px</label>
-            </div>
-            <button id="toggle-theme">Toggle Light/Dark Mode</button>
-            <button id="export-theme">Export Theme</button>
-        </div>
-        <div id="preview">
-            <h2>Preview</h2>
-            <div class="sample-component">
-                <h3>Sample Heading</h3>
-                <p>This is a sample paragraph to demonstrate the theme.</p>
-                <button class="btn-primary">Primary Button</button>
-                <button class="btn-secondary">Secondary Button</button>
-            </div>
-        </div>
+        </main>
     </div>
     <script src="script.js"></script>
 </body>

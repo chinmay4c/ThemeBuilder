@@ -1,77 +1,157 @@
 :root {
     --primary-color: #007bff;
     --secondary-color: #6c757d;
+    --accent-color: #28a745;
     --background-color: #ffffff;
     --text-color: #000000;
-    --font-family: Arial, sans-serif;
-    --font-size: 16px;
-    --padding: 16px;
-    --margin: 16px;
+    --font-family: 'Roboto', sans-serif;
+    --base-font-size: 16px;
+    --line-height: 1.5;
+    --base-spacing: 16px;
 }
 
-body {
-    font-family: var(--font-family);
-    font-size: var(--font-size);
-    background-color: var(--background-color);
-    color: var(--text-color);
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+body {
+    font-family: var(--font-family);
+    font-size: var(--base-font-size);
+    line-height: var(--line-height);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
 #app {
     display: flex;
+    flex-direction: column;
     min-height: 100vh;
 }
 
-#theme-controls, #preview {
-    padding: var(--padding);
+header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: calc(var(--base-spacing) * 2);
+    text-align: center;
+}
+
+main {
+    display: flex;
     flex: 1;
 }
 
+#theme-controls, #preview {
+    padding: var(--base-spacing);
+    overflow-y: auto;
+}
+
 #theme-controls {
+    flex: 0 0 300px;
     background-color: #f8f9fa;
     border-right: 1px solid #dee2e6;
 }
 
-label {
-    display: block;
-    margin-bottom: 10px;
+#preview {
+    flex: 1;
 }
 
-input[type="color"], input[type="text"], input[type="number"] {
+h1, h2, h3 {
+    margin-bottom: var(--base-spacing);
+}
+
+section {
+    margin-bottom: calc(var(--base-spacing) * 2);
+}
+
+label {
+    display: block;
+    margin-bottom: calc(var(--base-spacing) / 2);
+}
+
+input[type="color"], input[type="text"], input[type="number"], select {
     width: 100%;
-    padding: 5px;
-    margin-top: 5px;
+    padding: calc(var(--base-spacing) / 2);
+    margin-top: calc(var(--base-spacing) / 4);
+    border: 1px solid #ced4da;
+    border-radius: 4px;
 }
 
 button {
-    margin-top: 10px;
-    padding: 10px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: calc(var(--base-spacing) / 2) var(--base-spacing);
+    margin-top: var(--base-spacing);
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: var(--accent-color);
+}
+
+.color-palette {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: calc(var(--base-spacing) / 2);
+}
+
+.preview-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--base-spacing);
 }
 
 .sample-component {
     background-color: var(--background-color);
-    padding: var(--padding);
-    margin: var(--margin);
+    padding: var(--base-spacing);
     border: 1px solid var(--secondary-color);
-    border-radius: 5px;
+    border-radius: 4px;
+}
+
+.card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    display: inline-block;
+    padding: calc(var(--base-spacing) / 2) var(--base-spacing);
+    margin-right: calc(var(--base-spacing) / 2);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
 }
 
 .btn-secondary {
     background-color: var(--secondary-color);
     color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: var(--base-spacing);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: calc(var(--base-spacing) / 4);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: calc(var(--base-spacing) / 2);
+    border: 1px solid var(--secondary-color);
+    border-radius: 4px;
 }
